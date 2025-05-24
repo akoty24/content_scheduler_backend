@@ -12,7 +12,7 @@ class AuthController extends Controller
 {
     public function __construct(private AuthService $authService) {}
 
-    // Register new user
+    
     public function register(RegisterRequest $request)
     {
   
@@ -24,19 +24,18 @@ class AuthController extends Controller
         if (!$user) {
             return error('User already exists ', 422);
         }
-        $token = $user->createToken(name: 'auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
        $data=[
             'user' => UsersResource::make($user),
             'token' => $token,
             'token_type' => 'Bearer'
         ];
-        return success([
-           
-        ], 'User registered successfully');
+        return success(
+            $data
+        , 'User registered successfully');
     
     }
 
-    // Login user and return token
     public function login(LoginRequest $request)
     {
         $user = $this->authService->login($request->validated());
@@ -66,7 +65,6 @@ class AuthController extends Controller
             'user' => UsersResource::make($user),
         ], 'User profile retrieved successfully');
     }
-    // Logout user
     public function logout()
     {
         $this->authService->logout();

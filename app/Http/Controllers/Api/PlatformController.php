@@ -60,30 +60,8 @@ class PlatformController extends Controller
 
 public function userPosts(Platform $platform, Request $request)
 {
-    $user = $request->user() ?? auth()->user();
-    $perPage = $request->input(key: 'perPage');
-    $search = $request->input('search');
-    $sortKey = $request->input('sort', 'title');
-    $sortOrder = $request->input('order', 'asc');
-
-    $query = $platform->posts()
-        ->where('user_id', $user->id)
-        ->with('platforms');
-
-    // فلترة حسب البحث
-    if ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%$search%")
-              ->orWhere('content', 'like', "%$search%")
-              ->orWhere('status', 'like', "%$search%");
-        });
-    }
-
-    // الترتيب
-    $query->orderBy($sortKey, $sortOrder);
-    // pagination
-    $posts = $query->paginate($perPage);
-
+     $posts = $this->platformService->getUserPostsByPlatform($platform, $request); 
+ 
     return success([
         'posts' => PostResource::collection($posts),
         'pagination' => [

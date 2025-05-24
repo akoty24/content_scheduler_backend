@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PlatformService
 {
-    // List all available platforms
     public function listAll($request)
     {
         $perPage = $request->input('per_page', 5);
@@ -15,13 +14,11 @@ class PlatformService
         return $query->orderBy('created_at', 'desc')->paginate($perPage, ['*'], 'page', $page);
     }
 
-    // Get active platforms for the logged-in user
     public function getUserActivePlatforms()
     {
         return Auth::user()->platforms()->get();
     }
 
-    // Toggle platform active status for the user
     public function toggleUserPlatform(int $platformId): bool
     {
         $user = Auth::user();
@@ -33,5 +30,35 @@ class PlatformService
             $user->platforms()->attach($platformId);
             return true;
         }
+    }
+
+    public function getUserPostsByPlatform($platform, $request)
+    {
+            if (!$platform) {
+                return error('Platform not found', 404);
+            }
+
+            
+        $user =  auth()->user();
+        $perPage = $request->input(key: 'perPage');
+        $search = $request->input('search');
+        $sortKey = $request->input('sort', 'title');
+        $sortOrder = $request->input('order', 'asc');
+
+        $query = $platform->posts()
+            ->where('user_id', $user->id)
+            ->with('platforms');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                ->orWhere('content', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%");
+            });
+        }
+
+        $query->orderBy($sortKey, $sortOrder);
+        $posts = $query->paginate($perPage);
+      return $posts;
     }
 }

@@ -22,7 +22,7 @@ class HomeController extends Controller
                 'published' => Post::where('user_id', $user->id)->where('status', 'published')->count(),
                 'draft' => Post::where('user_id', $user->id)->where('status', 'draft')->count(),
             ];
-                $platforms = Platform::all(); // لو حابب تعرض كل المنصات
+                $platforms = Platform::all();      
                 $recentPosts = Post::where('user_id', $user->id)->latest()->take(5)->get();
         return success([
             'user' => new UsersResource($user),

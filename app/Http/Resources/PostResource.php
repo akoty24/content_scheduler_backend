@@ -13,7 +13,7 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'image_url' => $this->image_url ? env('APP_URL') . '/' . $this->image_url : null,
+            'image_url' => $this->image_url ? url($this->image_url) : null,
             'scheduled_time' => $this->scheduled_time?->format('Y-m-d H:i:s'),
             'status' => $this->status,
             'platforms' => $this->platforms->map(function ($platform) {

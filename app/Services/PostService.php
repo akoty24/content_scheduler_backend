@@ -30,8 +30,8 @@ class PostService
         $posts = $query->orderBy('scheduled_time', 'desc')->paginate($perPage, ['*'], 'page', $page);
        $stats=[
         'scheduled' => Post::where('user_id', Auth::id())->where('status', PostStatus::SCHEDULED)->count(),
-        'published' => Post::where('user_id', Auth::id())->where('status', PostStatus::SCHEDULED)->count(),
-        'draft' => Post::where('user_id', Auth::id())->where('status', PostStatus::SCHEDULED)->count(),
+        'published' => Post::where('user_id', Auth::id())->where('status', PostStatus::PUBLISHED)->count(),
+        'draft' => Post::where('user_id', Auth::id())->where('status', PostStatus::DRAFT)->count(),
        ];
          return [
             'posts' => $posts,
@@ -73,7 +73,6 @@ class PostService
         ]);
 
 
-            // Attach platforms with default 'pending' status
             $post->platforms()->attach(array_fill_keys($data['platform_ids'], ['platform_status' => 'pending']));
 
             return $post;
@@ -85,7 +84,6 @@ class PostService
 {
     return DB::transaction(function () use ($post, $data) {
 
-        // Handle image upload if provided
         if (isset($data['image_url']) && $data['image_url'] instanceof \Illuminate\Http\UploadedFile) {
             if ($post->image_url) {
                 $oldPath = public_path($post->image_url);
@@ -97,7 +95,6 @@ class PostService
             $data['image_url'] = $this->storeImage($data['image_url'], 'images/posts');
         }
 
-        // Update post fields
         $post->update([
             'title' => $data['title'] ?? $post->title,
             'content' => $data['content'] ?? $post->content,
@@ -106,7 +103,6 @@ class PostService
             'status' => $data['status'] ?? $post->status,
         ]);
 
-        // Ensure the model has an ID and is fresh before syncing
         $post->refresh();
 
         if (!empty($data['platform_ids']) && is_array($data['platform_ids'])) {

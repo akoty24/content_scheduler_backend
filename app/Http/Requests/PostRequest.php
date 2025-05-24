@@ -24,26 +24,26 @@ class PostRequest extends FormRequest
     {
           
            if ($this->isMethod('post')) {
-    return [
-        'title' => 'required|string|max:255',
-        'content' => 'required|string',
-        'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'status' => 'nullable|string',
-        'scheduled_time' => 'nullable|date|required_if:status,scheduled',
-        'platform_ids' => 'required|array',
-        'platform_ids.*' => 'exists:platforms,id',
-    ];
-} else {
-    return [
-        'title' => 'required|string|max:255',
-        'content' => 'required|string',
-        'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'status' => 'nullable|string',
-        'scheduled_time' => 'nullable|date|required_if:status,scheduled',
-        'platform_ids' => 'required|array',
-        'platform_ids.*' => 'exists:platforms,id',
-    ];
-}
+                return [
+                    'title' => 'required|string|max:255',
+                    'content' => 'required|string',
+                    'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                    'status' => 'nullable|string',
+                    'scheduled_time' => 'nullable|date|required_if:status,scheduled',
+                    'platform_ids' => 'required|array',
+                    'platform_ids.*' => 'exists:platforms,id',
+                ];
+            } else {
+                return [
+                    'title' => 'required|string|max:255',
+                    'content' => 'required|string',
+                    'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                    'status' => 'nullable|string',
+                    'scheduled_time' => 'nullable|date|required_if:status,scheduled',
+                    'platform_ids' => 'required|array',
+                    'platform_ids.*' => 'exists:platforms,id',
+                ];
+            }
 
     
            

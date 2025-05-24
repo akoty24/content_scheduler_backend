@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthService
 {
-    // Register new user
     public function register(array $data): User
     {
         $user = User::create([
